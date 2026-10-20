@@ -104,4 +104,15 @@ public sealed class PresetTests : IDisposable
         var missing = PresetApplier.Plan(new ModPreset { Name = "Old", Mods = ["willis81808-UnboundLib-1.0.0", "gone-Mod"] }, Index, Mods());
         Assert.Equal(["willis81808-UnboundLib-1.0.0 (version no longer on Thunderstore)", "gone-Mod"], missing.Install.Unresolved);
     }
+
+    // Hits api.github.com, so it only runs with RMK_NETWORK_TESTS=1.
+    [Fact]
+    public async Task LoadsPresetsFromPublicRepo()
+    {
+        if (Environment.GetEnvironmentVariable("RMK_NETWORK_TESTS") != "1") return;
+        using var http = new HttpClient { DefaultRequestHeaders = { { "User-Agent", "RoundsModkit-tests" } } };
+        var entries = await PresetSources.LoadRepoAsync(http);
+        var rwf = Assert.Single(entries, e => e.FileName == "rounds-with-friends.json");
+        Assert.Contains("olavim-RoundsWithFriends-2.2.2", rwf.Preset.Mods);
+    }
 }
