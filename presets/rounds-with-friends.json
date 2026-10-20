@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "name": "Rounds With Friends",
+  "description": "RoundsWithFriends: more players and team modes for online lobbies, with UnboundLib. Everyone in a lobby needs the same mods.",
+  "exclusive": true,
+  "mods": [
+    "olavim-RoundsWithFriends-2.2.2",
+    "willis81808-MMHook-1.0.0",
+    "willis81808-UnboundLib-3.2.14"
+  ]
+}

@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ROUNDS runs Unity 2018.4 Mono with the .NET 4.x profile; net472 matches what the game can load. -->
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>RoundsModkit.ControllerFix</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <!-- Publicized game assemblies expose private members; this lets the compiler accept that. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <RoundsDir Condition="'$(RoundsDir)' == '' And '$(OS)' == 'Windows_NT'">C:\Program Files (x86)\Steam\steamapps\common\ROUNDS</RoundsDir>
+    <RoundsDir Condition="'$(RoundsDir)' == ''">$(HOME)/.local/share/Steam/steamapps/common/ROUNDS</RoundsDir>
+    <ManagedDir>$(RoundsDir)/ROUNDS_Data/Managed</ManagedDir>
+    <BepInExCore Condition="'$(BepInExCore)' == ''">$(RoundsDir)/BepInEx/core</BepInExCore>
+    <GameLib>$(MSBuildThisFileDirectory)../../lib</GameLib>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net472" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx" HintPath="$(BepInExCore)/BepInEx.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(BepInExCore)/0Harmony.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(ManagedDir)/UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(ManagedDir)/UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="InControl" HintPath="$(ManagedDir)/InControl.dll" Private="false" />
+  </ItemGroup>
+
+  <Target Name="CheckReferences" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="!Exists('$(BepInExCore)/BepInEx.dll')" Text="BepInEx not found at $(BepInExCore). Install it with the launcher, or pass -p:BepInExCore=..." />
+  </Target>
+
+  <!-- dotnet build -p:Deploy=true copies the plugin straight into the game for a quick test loop. -->
+  <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(Deploy)' == 'true'">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(RoundsDir)/BepInEx/plugins/$(AssemblyName)" />
+  </Target>
+</Project>

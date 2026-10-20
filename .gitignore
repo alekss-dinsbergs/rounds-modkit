@@ -1,0 +1,11 @@
+# Decompiled game code and copies of game binaries are for local use only.
+decompiled/
+lib/
+game/
+
+bin/
+obj/
+artifacts/
+*.user
+.vs/
+.idea/
